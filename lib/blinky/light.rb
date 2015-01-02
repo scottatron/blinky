@@ -1,12 +1,12 @@
 module Blinky
   class Light
 
-    def initialize device_handle, recipe, plugins
-      @handle = device_handle
+    def initialize device, recipe, plugins
+      @handle = device.open
       begin
         @handle.usb_detach_kernel_driver_np(0)
       rescue LIBUSB::ERROR_NOT_FOUND
-        # Already detached
+         # Already detached
       end
       @handle.set_configuration(device.configurations.first)
       @handle.usb_claim_interface(0)
