@@ -3,7 +3,14 @@ module Blinky
 
     def initialize device_handle, recipe, plugins
       @handle = device_handle
-      self.extend(recipe)   
+      begin
+        @handle.usb_detach_kernel_driver_np(0)
+      rescue LIBUSB::ERROR_NOT_FOUND
+        # Already detached
+      end
+      @handle.set_configuration(device.configurations.first)
+      @handle.usb_claim_interface(0)
+      self.extend(recipe)
       plugins.each do |plugin|
         self.extend(plugin)
       end    
